@@ -4,9 +4,7 @@ import (
 	"PicNext/utils"
 	"net/http"
 	"path/filepath"
-	"strings"
 
-	"github.com/gabriel-vasile/mimetype"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +17,6 @@ func UploadImage(c *gin.Context) {
 			"message": "文件上传失败！",
 		})
 	}
-	file.Header.Get()
 	filename := utils.RandName()
 
 	if err != nil {
@@ -27,8 +24,6 @@ func UploadImage(c *gin.Context) {
 			"message": "不允许的文件类型",
 		})
 	}
-	filetype = strings.Split(filetype, "/")[1]
-	filename = filename + "." + filetype
 	savepath := filepath.Join("uploads", filename)
 	if err := c.SaveUploadedFile(file, savepath); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
