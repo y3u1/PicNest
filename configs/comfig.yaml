@@ -1,0 +1,8 @@
+app:
+  port: 8888
+database:
+  driver: sqlite
+log:
+  format: json
+  level: debug
+  report_caller: false

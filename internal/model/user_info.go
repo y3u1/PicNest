@@ -1,12 +1,14 @@
 package model
 
+import "gorm.io/gorm"
+
 type UserInfo struct {
+	gorm.Model
 	Id       int    `json:"id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-type UserLoginInfo struct {
-	Id    int
-	Token string
+func (u UserInfo) TableName() string {
+	return "userinfo"
 }
