@@ -1,6 +1,11 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"PicNest/internal/utils"
+	"strings"
+
+	"gorm.io/gorm"
+)
 
 type UserInfo struct {
 	gorm.Model
@@ -8,6 +13,12 @@ type UserInfo struct {
 	Password string `gorm:"notnull";json:"password"`
 }
 
-// func (u UserInfo) TableName() string {
-// 	return "userinfo"
-// }
+func (u *UserInfo) BeforeSave(*gorm.DB) error {
+	hashedPassword, err := utils.HashPassword(u.Password)
+	if err != nil {
+		return err
+	}
+	u.Password = hashedPassword
+	u.Username = strings.TrimSpace(u.Username)
+	return nil
+}

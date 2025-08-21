@@ -32,6 +32,7 @@ func (r *UserRepository) CreateUser(username string, password string) (model.Use
 		return user, errors.New("用户已存在")
 	}
 	user = model.UserInfo{Username: username, Password: password}
+
 	result = r.engine.Create(&user)
 	return user, result.Error
 }

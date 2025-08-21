@@ -5,18 +5,20 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserController struct {
 	userService *services.UserService
+	authService *services.AuthService
 }
 type UserDto struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-func NewUserController(UserService *services.UserService) *UserController {
-	return &UserController{userService: UserService}
+func NewUserController(UserService *services.UserService, authService *services.AuthService) *UserController {
+	return &UserController{userService: UserService, authService: authService}
 }
 
 func (uc *UserController) Login(c *gin.Context) {
@@ -34,7 +36,9 @@ func (uc *UserController) Login(c *gin.Context) {
 		})
 		return
 	}
-	if userDto.Password == user.Password {
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userDto.Password)); err == nil {
+
 		c.JSON(http.StatusOK, gin.H{
 			"message": "登录成功",
 			"success": true,
