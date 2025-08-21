@@ -4,11 +4,10 @@ import "gorm.io/gorm"
 
 type UserInfo struct {
 	gorm.Model
-	Id       int    `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `gorm:"notnull";json:"username"`
+	Password string `gorm:"notnull";json:"password"`
 }
 
-func (u UserInfo) TableName() string {
-	return "userinfo"
-}
+// func (u UserInfo) TableName() string {
+// 	return "userinfo"
+// }

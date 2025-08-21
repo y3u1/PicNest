@@ -17,6 +17,7 @@ func NewUserRepository(engine *gorm.DB) *UserRepository {
 
 func (r *UserRepository) QueryUser(username string) (model.UserInfo, error) {
 	var user model.UserInfo
+
 	result := r.engine.First(&user, "username = ?", username)
 	if result.RowsAffected == 0 {
 		return user, result.Error
@@ -25,8 +26,9 @@ func (r *UserRepository) QueryUser(username string) (model.UserInfo, error) {
 }
 func (r *UserRepository) CreateUser(username string, password string) (model.UserInfo, error) {
 	var user model.UserInfo
+
 	result := r.engine.First(&user, "username = ?", username)
-	if result.RowsAffected == 0 {
+	if result.RowsAffected != 0 {
 		return user, errors.New("用户已存在")
 	}
 	user = model.UserInfo{Username: username, Password: password}
@@ -35,6 +37,7 @@ func (r *UserRepository) CreateUser(username string, password string) (model.Use
 }
 func (r *UserRepository) DeleteUser(username string) error {
 	var user model.UserInfo
+
 	result := r.engine.First(&user, "username = ?", username)
 	if result.RowsAffected == 0 {
 		return errors.New("不存在该用户")

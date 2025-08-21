@@ -4,9 +4,9 @@ import "gorm.io/gorm"
 
 type UserLoginInfo struct {
 	gorm.Model
-	Token string
+	Token string `gorm:"notnull"`
 }
 
-func (u UserLoginInfo) TableName() string {
-	return "userlogininfo"
-}
+// func (u UserLoginInfo) TableName() string {
+// 	return "userlogininfo"
+// }

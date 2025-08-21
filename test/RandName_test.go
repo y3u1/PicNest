@@ -1,7 +1,7 @@
 package test
 
 import (
-	"PicNext/utils"
+	"PicNest/internal/utils"
 	"fmt"
 	"testing"
 )

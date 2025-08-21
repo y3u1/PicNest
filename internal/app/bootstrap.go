@@ -1,6 +1,7 @@
 package app
 
 import (
+	v1 "PicNest/internal/api/v1"
 	"PicNest/internal/app/config"
 	"PicNest/internal/app/initializer"
 	"PicNest/internal/middleware"

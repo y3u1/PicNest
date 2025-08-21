@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"PicNext/utils"
+	"PicNest/internal/utils"
 	"net/http"
 	"path/filepath"
 

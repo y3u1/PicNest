@@ -198,32 +198,32 @@
         </div>
         
         <div class="login-form">
-            <form id="loginForm">
+            <form id="loginForm" method="POST">
                 <div class="input-group">
                     <i class="fas fa-user"></i>
-                    <input type="text" id="username" placeholder="用户名" required>
+                    <input name = "username" type="text" id="username" placeholder="用户名" required>
                     <div class="error-message" id="username-error">请输入有效的用户名</div>
                 </div>
                 
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" id="password" placeholder="密码" required>
+                    <input name = "password" type="password" id="password" placeholder="密码" required>
                     <div class="error-message" id="password-error">密码不能为空</div>
                 </div>
                 
-                <button type="submit" class="login-button" id="loginBtn">
+                <button type="submit" class="login-button" id="loginBtn" >
                     <span id="buttonText">登 录</span>
                 </button>
             </form>
         </div>
         
         <div class="footer-note">
-            <p>© 2023 图床服务 | <a href="#">忘记密码?</a></p>
+            <p>© 2023 图床服务</p>
         </div>
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit',async function(e) {
             e.preventDefault();
             
             const username = document.getElementById('username').value;
@@ -233,7 +233,7 @@
             const loginBtn = document.getElementById('loginBtn');
             const buttonText = document.getElementById('buttonText');
             
-            // 重置错误消息
+            //重置错误消息
             usernameError.style.display = 'none';
             passwordError.style.display = 'none';
             
@@ -256,17 +256,34 @@
                 loginBtn.disabled = true;
                 buttonText.innerHTML = '<span class="spinner"></span> 登录中...';
                 
-                // 模拟登录请求
-                setTimeout(() => {
-                    // 这里模拟登录成功
+                // // 模拟登录请求
+                // setTimeout(() => {
+                //     // 这里模拟登录成功
+                //     loginBtn.style.background = '#38a169';
+                //     buttonText.innerHTML = '<i class="fas fa-check"></i> 登录成功';
+                    
+                //     // 跳转到图床页面
+                //     setTimeout(() => {
+                //         window.location.href = "/upload";
+                //     }, 1000);
+                // }, 1500);
+                const res = await fetch('/v1/user/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+                if (data.success) {
                     loginBtn.style.background = '#38a169';
                     buttonText.innerHTML = '<i class="fas fa-check"></i> 登录成功';
-                    
                     // 跳转到图床页面
-                    setTimeout(() => {
-                        window.location.href = "#";
-                    }, 1000);
-                }, 1500);
+                    window.location.href = '/upload';
+                } else { 
+                    passwordError.style.display = 'block';
+                    passwordError.innerText = '登录失败：' + (data.message || '用户名或密码错误');
+                    loginBtn.disabled = false;
+                    buttonText.innerText = '登 录';
+                }
             }
         });
         
