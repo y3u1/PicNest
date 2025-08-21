@@ -6,6 +6,9 @@
 
 前端不会写,问的DeepSeek
 
+## 使用
+先配置 `config/config.yaml` 下文文件储存路径
+然后 `go run cmd/main.go`
 ## TODO
 - [x] 实现登录功能
 - [ ] 注册页面(忘写了,先放这)
