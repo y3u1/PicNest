@@ -51,12 +51,14 @@ func (uc *UserController) Login(c *gin.Context) {
 			})
 			return
 		}
+		c.Header("Authorization", userInfo.Token)
 		c.JSON(http.StatusOK, gin.H{
 			"message": "登录成功",
 			"success": true,
 			"id":      user.ID,
-			"tone":    userInfo.Token,
+			"token":   userInfo.Token,
 		})
+
 	} else {
 		c.JSON(http.StatusForbidden, gin.H{
 			"message": "不正确的用户名或者密码",
@@ -95,7 +97,7 @@ func (uc *UserController) Register(c *gin.Context) {
 		"message": "注册成功",
 		"success": true,
 		"id":      user.ID,
-		"token":   userInfo.Token,
 	})
+	c.Header("Authorization", userInfo.Token)
 
 }

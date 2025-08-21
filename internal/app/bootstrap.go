@@ -4,7 +4,6 @@ import (
 	v1 "PicNest/internal/api/v1"
 	"PicNest/internal/app/config"
 	"PicNest/internal/app/initializer"
-	"PicNest/internal/middleware"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -26,7 +25,6 @@ func Start() {
 	}
 
 	r := gin.New()
-	r.Use(middleware.Auth)
 	v1.SetRouter(r, initializer.Engine)
 
 	err = r.Run(fmt.Sprintf(":%d", config.Conf.App.Port))

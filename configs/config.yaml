@@ -1,5 +1,6 @@
 app:
   port: 8888
+  file_save_path: ./uploads
 database:
   driver: sqlite
 log:

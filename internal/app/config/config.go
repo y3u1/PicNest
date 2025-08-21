@@ -13,7 +13,8 @@ type Config struct {
 }
 
 type AppConfig struct {
-	Port int `mapstructure:"port"`
+	Port         int    `mapstructure:"port"`
+	FileSavePath string `yaml:"file_save_path" mapstructure:"file_save_path"`
 }
 
 type DatabaseConfig struct {

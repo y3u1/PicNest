@@ -1,38 +1,31 @@
 package services
 
 import (
+	"PicNest/internal/app/config"
 	"PicNest/internal/utils"
-	"net/http"
+	"mime/multipart"
 	"path/filepath"
-
-	"github.com/gin-gonic/gin"
 )
 
 type UploadService struct {
 }
 
-func (up *UploadService) UploadImage(c *gin.Context) {
-	file, err := c.FormFile("file")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "文件上传失败！",
-		})
-	}
-	filename := utils.RandName()
+func NewUploadService() *UploadService {
+	return &UploadService{}
+}
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "不允许的文件类型",
-		})
+func (up *UploadService) UploadImage(file *multipart.FileHeader) error {
+
+	// 获取文件名
+	filename := file.Filename
+	// 获取文件后缀
+	ext := filepath.Ext(filename)
+	// 生成新的文件名
+	newFilename := utils.RandName() + ext
+	filepath := filepath.Join(config.Conf.App.FileSavePath, newFilename)
+	// 保存文件到指定目录
+	if err := utils.SaveFile(file, filepath); err != nil {
+		return err
 	}
-	savepath := filepath.Join("uploads", filename)
-	if err := c.SaveUploadedFile(file, savepath); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "文件上传失败",
-		})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"message": "文件上传成功",
-	})
+	return nil
 }

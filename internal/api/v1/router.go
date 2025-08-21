@@ -4,6 +4,7 @@ import (
 	"PicNest/internal/controller"
 	"PicNest/internal/middleware"
 	"PicNest/internal/services"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -13,9 +14,9 @@ func SetRouter(r *gin.Engine, engine *gorm.DB) {
 
 	r.LoadHTMLGlob("static/*")
 	// r.Static("./internal/static")
-	// r.GET("/", func(c *gin.Context) {
-	// 	c.Redirect(http.StatusTemporaryRedirect, "/login")
-	// })
+	r.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusTemporaryRedirect, "/login")
+	})
 
 	r.GET("/login", func(c *gin.Context) {
 		c.HTML(200, "login.html", gin.H{})
@@ -26,6 +27,7 @@ func SetRouter(r *gin.Engine, engine *gorm.DB) {
 	AuthService := services.NewAuthService(engine)
 	UserService := services.NewUserService(engine)
 	UserController := controller.NewUserController(UserService, AuthService)
+	UploadController := controller.NewUploadController()
 	v1 := r.Group("/v1")
 	{
 		user := v1.Group("/user")
@@ -33,7 +35,7 @@ func SetRouter(r *gin.Engine, engine *gorm.DB) {
 			user.POST("/login", UserController.Login)
 			user.POST("/register", UserController.Register)
 		}
-		upload := v1.Group("/upload")
-		upload.Use(middleware.Auth)
+		v1.POST("/upload", middleware.Auth, UploadController.Upload)
+
 	}
 }

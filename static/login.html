@@ -276,6 +276,7 @@
                 if (data.success) {
                     loginBtn.style.background = '#38a169';
                     buttonText.innerHTML = '<i class="fas fa-check"></i> 登录成功';
+                    localStorage.setItem('token', data.token);
                     // 跳转到图床页面
                     window.location.href = '/upload';
                 } else { 
