@@ -12,6 +12,8 @@ import (
 
 func SetRouter(r *gin.Engine, engine *gorm.DB) {
 
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
 	r.LoadHTMLGlob("static/*")
 	// r.Static("./internal/static")
 	r.GET("/", func(c *gin.Context) {
