@@ -16,6 +16,10 @@ type UserDto struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+type UserInfoDto struct {
+	Username string `json:"username"`
+	Token    string `json:"token"`
+}
 
 func NewUserController(UserService *services.UserService, authService *services.AuthService) *UserController {
 	return &UserController{userService: UserService, authService: authService}
@@ -38,11 +42,20 @@ func (uc *UserController) Login(c *gin.Context) {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userDto.Password)); err == nil {
-
+		//账号存在,一定有记录,直接更新
+		userInfo, err := uc.authService.UpdateRecord(userDto.Username)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": err.Error(),
+				"success": false,
+			})
+			return
+		}
 		c.JSON(http.StatusOK, gin.H{
 			"message": "登录成功",
 			"success": true,
 			"id":      user.ID,
+			"tone":    userInfo.Token,
 		})
 	} else {
 		c.JSON(http.StatusForbidden, gin.H{
@@ -69,10 +82,20 @@ func (uc *UserController) Register(c *gin.Context) {
 		})
 		return
 	}
+	//注册成功,创建登录记录
+	userInfo, err := uc.authService.CreateRecord(userDto.Username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+			"success": false,
+		})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "注册成功",
 		"success": true,
 		"id":      user.ID,
+		"token":   userInfo.Token,
 	})
 
 }

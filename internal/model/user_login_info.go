@@ -7,7 +7,3 @@ type UserLoginInfo struct {
 	Username string `gorm:"notnull"`
 	Token    string `gorm:"notnull"`
 }
-
-// func (u UserLoginInfo) TableName() string {
-// 	return "userlogininfo"
-// }
