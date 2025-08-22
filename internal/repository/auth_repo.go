@@ -23,6 +23,15 @@ func (r *AuthRepository) QueryUser(username string) (model.UserLoginInfo, error)
 	}
 	return userlogin, nil
 }
+func (r *AuthRepository) QueryToken(username string) (model.UserLoginInfo, error) {
+	var userlogin model.UserLoginInfo
+
+	result := r.engine.First(&userlogin, "token = ?", username)
+	if result.RowsAffected == 0 {
+		return userlogin, result.Error
+	}
+	return userlogin, nil
+}
 func (r *AuthRepository) CreateUserLoginInfo(username, token string) (model.UserLoginInfo, error) {
 	var userlogin model.UserLoginInfo
 

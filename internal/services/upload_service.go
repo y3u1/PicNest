@@ -14,7 +14,7 @@ func NewUploadService() *UploadService {
 	return &UploadService{}
 }
 
-func (up *UploadService) UploadImage(file *multipart.FileHeader) error {
+func (up *UploadService) UploadImage(file *multipart.FileHeader) (string, error) {
 
 	// 获取文件名
 	filename := file.Filename
@@ -25,7 +25,8 @@ func (up *UploadService) UploadImage(file *multipart.FileHeader) error {
 	filepath := filepath.Join(config.Conf.App.FileSavePath, newFilename)
 	// 保存文件到指定目录
 	if err := utils.SaveFile(file, filepath); err != nil {
-		return err
+		return "", err
 	}
-	return nil
+
+	return filename, nil
 }

@@ -11,5 +11,5 @@ func NewAuthController(authService *services.AuthService) *AuthController {
 }
 
 func (ac *AuthController) Auth() {
-
+	
 }

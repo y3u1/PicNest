@@ -23,7 +23,8 @@ func (us *UploadController) Upload(c *gin.Context) {
 		})
 		return
 	}
-	err = us.UploadService.UploadImage(file)
+	var filename string
+	filename, err = us.UploadService.UploadImage(file)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
@@ -32,6 +33,6 @@ func (us *UploadController) Upload(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "文件上传成功",
-		"url":     "/uploads/" + file.Filename, // 假设文件名未更改
+		"url":     filename, // 假设文件名未更改
 	})
 }

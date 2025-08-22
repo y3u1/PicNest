@@ -18,6 +18,9 @@ func NewAuthService(engine *gorm.DB) *AuthService {
 func (as *AuthService) QueryRecord(username string) (model.UserLoginInfo, error) {
 	return as.AuthRepo.QueryUser(username)
 }
+func (as *AuthService) QueryToken(token string) (model.UserLoginInfo, error) {
+	return as.AuthRepo.QueryToken(token)
+}
 func (as *AuthService) CreateRecord(username string) (model.UserLoginInfo, error) {
 	token, err := utils.GenerateToken(username)
 	if err != nil {
@@ -32,8 +35,8 @@ func (as *AuthService) UpdateRecord(username string) (model.UserLoginInfo, error
 	}
 	return as.AuthRepo.UpdateLoginInfo(username, token)
 }
-func (as *AuthService) Authenticate(username, password string) error {
-	ul, err := as.AuthRepo.QueryUser(username)
+func (as *AuthService) Authenticate(token string) error {
+	ul, err := as.AuthRepo.QueryToken(token)
 	if err != nil {
 		return err
 	}

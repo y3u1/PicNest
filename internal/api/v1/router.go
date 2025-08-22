@@ -37,7 +37,7 @@ func SetRouter(r *gin.Engine, engine *gorm.DB) {
 			user.POST("/login", UserController.Login)
 			user.POST("/register", UserController.Register)
 		}
-		v1.POST("/upload", middleware.Auth, UploadController.Upload)
+		v1.POST("/upload", middleware.Auth(AuthService), UploadController.Upload)
 
 	}
 }
