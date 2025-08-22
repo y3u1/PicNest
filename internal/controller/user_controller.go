@@ -51,7 +51,7 @@ func (uc *UserController) Login(c *gin.Context) {
 			})
 			return
 		}
-		c.Header("Authorization", userInfo.Token)
+		c.Set("Authorization", userInfo.Token)
 		c.JSON(http.StatusOK, gin.H{
 			"message": "登录成功",
 			"success": true,
@@ -93,6 +93,7 @@ func (uc *UserController) Register(c *gin.Context) {
 		})
 		return
 	}
+	c.Set("Authorization", userInfo.Token)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "注册成功",
 		"success": true,

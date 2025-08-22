@@ -28,5 +28,5 @@ func (up *UploadService) UploadImage(file *multipart.FileHeader) (string, error)
 		return "", err
 	}
 
-	return filename, nil
+	return newFilename, nil
 }

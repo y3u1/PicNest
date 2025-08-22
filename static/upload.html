@@ -405,6 +405,13 @@
             // 上传文件函数
             function uploadFile(file) {
                 const token = localStorage.getItem("token");
+                 if (!token) {
+                    showError('Token不存在,请先登录');
+                    setTimeout( function() {
+                        window.location.href = "/login";
+                    }, 2000);
+                    return;
+                }
                 const formData = new FormData();
                 formData.append('file', file);
                 
@@ -454,6 +461,7 @@
             // 显示成功消息
             function showSuccess(url) {
                 successMessage.style.display = 'block';
+                uploadStatus.style.display = 'none';
                 errorMessage.style.display = 'none';
                 
                 // 复制链接到剪贴板

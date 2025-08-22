@@ -26,6 +26,9 @@ func SetRouter(r *gin.Engine, engine *gorm.DB) {
 	r.GET("/upload", func(c *gin.Context) {
 		c.HTML(200, "upload.html", gin.H{})
 	})
+	r.GET("/register", func(c *gin.Context) {
+		c.HTML(200, "register.html", gin.H{})
+	})
 	AuthService := services.NewAuthService(engine)
 	UserService := services.NewUserService(engine)
 	UserController := controller.NewUserController(UserService, AuthService)

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图床 | 简约登录</title>
+    <title>图床 | 用户注册</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -117,16 +117,11 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 8px rgba(58, 123, 213, 0.25);
         }
-         .switch-form {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #718096;
-        }
+        
         .login-button:active {
             transform: translateY(0);
         }
-       
+        
         .footer-note {
             text-align: center;
             padding: 20px;
@@ -190,6 +185,32 @@
             text-align: left;
             display: none;
         }
+        
+        /* 成功提示 */
+        .success-message {
+            color: #38a169;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            text-align: left;
+            display: none;
+        }
+        
+        .switch-form {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+        
+        .switch-form a {
+            color: #3a7bd5;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .switch-form a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -198,34 +219,40 @@
             <div class="logo">
                 <i class="fas fa-cloud-upload-alt"></i>
             </div>
-            <h1>图床登录</h1>
-            <p>安全访问您的图片资源</p>
+            <h1>图床注册</h1>
+            <p>创建新账户以管理您的图片资源</p>
         </div>
         
         <div class="login-form">
-            <form id="loginForm" method="POST">
+            <form id="registerForm" method="POST">
                 <div class="input-group">
                     <i class="fas fa-user"></i>
-                    <input name = "username" type="text" id="username" placeholder="用户名" required>
-                    <div class="error-message" id="username-error">请输入有效的用户名</div>
+                    <input name="username" type="text" id="username" placeholder="用户名" required>
+                    <div class="error-message" id="username-error">用户名不能为空</div>
                 </div>
                 
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input name = "password" type="password" id="password" placeholder="密码" required>
-                    <div class="error-message" id="password-error">密码不能为空</div>
+                    <input name="password" type="password" id="password" placeholder="密码" required>
+                    <div class="error-message" id="password-error">密码不能少于6个字符</div>
                 </div>
                 
-                <button type="submit" class="login-button" id="loginBtn" >
-                    <span id="buttonText">登 录</span>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input name="confirmPassword" type="password" id="confirmPassword" placeholder="确认密码" required>
+                    <div class="error-message" id="confirmPassword-error">两次输入的密码不一致</div>
+                </div>
+                
+                <button type="submit" class="login-button" id="registerBtn">
+                    <span id="buttonText">注册</span>
                 </button>
-
+                
+                <div class="success-message" id="register-success">注册成功！正在跳转到登录页面...</div>
             </form>
             
             <div class="switch-form">
-                没有账户？<a href="register">立即注册</a>
+                已有账户？<a href="login">立即登录</a>
             </div>
-
         </div>
         
         <div class="footer-note">
@@ -234,20 +261,24 @@
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit',async function(e) {
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
             const usernameError = document.getElementById('username-error');
             const passwordError = document.getElementById('password-error');
-            const loginBtn = document.getElementById('loginBtn');
+            const confirmPasswordError = document.getElementById('confirmPassword-error');
+            const registerBtn = document.getElementById('registerBtn');
             const buttonText = document.getElementById('buttonText');
+            const successMessage = document.getElementById('register-success');
             
-            //重置错误消息
+            // 重置错误消息
             usernameError.style.display = 'none';
             passwordError.style.display = 'none';
-
+            confirmPasswordError.style.display = 'none';
+            successMessage.style.display = 'none';
             
             let isValid = true;
             
@@ -258,47 +289,77 @@
             }
             
             // 验证密码
-            if (!password || password.trim() === '') {
+            if (!password || password.length < 6) {
                 passwordError.style.display = 'block';
+                passwordError.textContent = '密码不能少于6个字符';
+                isValid = false;
+            }
+            
+            // 验证确认密码
+            if (password !== confirmPassword) {
+                confirmPasswordError.style.display = 'block';
                 isValid = false;
             }
             
             if (isValid) {
                 // 显示加载状态
-                loginBtn.disabled = true;
-                buttonText.innerHTML = '<span class="spinner"></span> 登录中...';
+                registerBtn.disabled = true;
+                buttonText.innerHTML = '<span class="spinner"></span> 注册中...';
                 
-                // // 模拟登录请求
-                // setTimeout(() => {
-                //     // 这里模拟登录成功
-                //     loginBtn.style.background = '#38a169';
-                //     buttonText.innerHTML = '<i class="fas fa-check"></i> 登录成功';
+                try {
+                    const res = await fetch('/v1/user/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
                     
-                //     // 跳转到图床页面
-                //     setTimeout(() => {
-                //         window.location.href = "/upload";
-                //     }, 1000);
-                // }, 1500);
-                const res = await fetch('/v1/user/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    loginBtn.style.background = '#38a169';
-                    buttonText.innerHTML = '<i class="fas fa-check"></i> 登录成功,跳转到图床页面....';
-                    localStorage.setItem('token', data.token);
-                // 跳转到图床页面
-                    setTimeout(() => {
-                        window.location.href = 'upload';
-                    }, 1500);
-                } else { 
+                    const data = await res.json();
+                    
+                    if (data.success) {
+                        // 注册成功
+                        registerBtn.style.background = '#38a169';
+                        buttonText.innerHTML = '<i class="fas fa-check"></i> 注册成功';
+                        successMessage.style.display = 'block';
+                        
+                        // 3秒后跳转到登录页面
+                        setTimeout(() => {
+                            window.location.href = 'login';
+                        }, 3000);
+                    } else {
+                        // 注册失败
+                        registerBtn.disabled = false;
+                        buttonText.textContent = '注册';
+                        
+                        // 显示错误信息
+                        if (data.message.includes('用户已存在')) {
+                            usernameError.textContent = data.message;
+                            usernameError.style.display = 'block';
+                        } else {
+                            passwordError.textContent = data.message || '注册失败，请稍后重试';
+                            passwordError.style.display = 'block';
+                        }
+                    }
+                } catch (error) {
+                    console.error('注册错误:', error);
+                    registerBtn.disabled = false;
+                    buttonText.textContent = '注册';
+                    
+                    passwordError.textContent = '网络错误，请稍后重试';
                     passwordError.style.display = 'block';
-                    passwordError.innerText = '登录失败：' + (data.message || '用户名或密码错误');
-                    loginBtn.disabled = false;
-                    buttonText.innerText = '登 录';
                 }
+            }
+        });
+        
+        // 实时验证密码一致性
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            const confirmPasswordError = document.getElementById('confirmPassword-error');
+            
+            if (password !== confirmPassword && confirmPassword.length > 0) {
+                confirmPasswordError.style.display = 'block';
+            } else {
+                confirmPasswordError.style.display = 'none';
             }
         });
         
